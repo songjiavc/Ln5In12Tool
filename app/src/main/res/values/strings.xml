@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">辽宁12选5</string>
+    <string name="loadData">加载数据</string>
+    <string name="analysisSel2">任二分析</string>
+    <string name="title_activity_ren2_main">Ren2MainActivity</string>
+    <string name="action_settings">Settings</string>
+</resources>
