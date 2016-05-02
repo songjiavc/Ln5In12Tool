@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
@@ -88,6 +89,9 @@ public class GetLottoryData extends Service {
                         intent.setAction("com.baiylin.dataReceiver");
                         intent.putExtra("status", 1);
                         intent.putExtra("msg", "success!");
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("Ln5In12Bean", dataList.get(0));
+                        intent.putExtras(bundle);
                         sendBroadcast(intent);//发送广播
                     }
                 } catch (Exception e) {
@@ -115,7 +119,6 @@ public class GetLottoryData extends Service {
     }
     private void insertData2Db(List<Ln5In12Bean> dataList){
         SQLiteDatabase db = this.getDbHelper().getWritableDatabase();
-        db.delete("BASE",null,null);
         for(Ln5In12Bean ln5In12Bean : dataList) {
             ContentValues value = new ContentValues();
             value.put("ISSUE_NUMBER",ln5In12Bean.getIssueNumber());

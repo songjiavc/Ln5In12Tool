@@ -3,6 +3,7 @@ package com.baiylin.songjia.ln5in12tool.ren2;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.baiylin.songjia.ln5in12tool.adapter.GroupAdapter;
 import com.baiylin.songjia.ln5in12tool.bean.GroupBean;
 import com.baiylin.songjia.ln5in12tool.bean.Ln5In12Bean;
 import com.baiylin.songjia.ln5in12tool.db.DbHelper;
+import com.baiylin.songjia.ln5in12tool.receiver.DataReceiver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +28,11 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
 
     DbHelper dbHelper;
 
+    private DataReceiver dataReceiver;
+
     List<GroupBean> groupList = new ArrayList<>();
+
+    GroupAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +41,14 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
         Intent intent = getIntent();
         String style = intent.getStringExtra("style");
         initData(style);
-        GroupAdapter adapter = new GroupAdapter(Ren2MainActivity.this,R.layout.activity_ren2_item,groupList);
+        adapter = new GroupAdapter(Ren2MainActivity.this,R.layout.activity_ren2_item,groupList);
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
+        dataReceiver = new DataReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.baiylin.dataReceiver");
+        registerReceiver(dataReceiver, intentFilter);//注册Broadcast Receiver
     }
 
     private void initData(String style){
@@ -47,6 +57,7 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
     }
 
     private void getDataListFromSqlite(){
+        groupList.clear();
         this.getShowList();  //创建列表list
         dbHelper = new DbHelper(this, "Ln5In12Analysis.db", null, 1);
         //指定库
@@ -62,14 +73,18 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
                 int no5 = cursor.getInt(cursor.getColumnIndex("NO5"));
                 int[] arr = {no1,no2,no3,no4,no5};
                 //获取任二所有组合
-                List<String> lottoryGroupList = getGroupByIntArr(arr);
-                this.calc(groupList,lottoryGroupList,z);
+                onlyOneAnalysis(arr,z);
                 z++;
             }while(cursor.moveToNext());
         }else{
 
         }
         cursor.close();
+    }
+    //单个汇总出现次数方法
+    public void onlyOneAnalysis(int[] temp,int z){
+        List<String> lottoryGroupList = getGroupByIntArr(temp);
+        this.calc(groupList,lottoryGroupList,z);
     }
 
     private List<String> getGroupByIntArr(int[] arr){
@@ -123,5 +138,23 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
         System.out.println(view.getId());
         System.out.println(i+"");
         System.out.println(l+"");
+    }
+
+    private class DataReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent){
+            //更新listview
+            /*
+             *
+             * 如果传递的是List<Object>,可以把list强转成Serializable类型,而且object类型也必须实现了Serializable接口
+               Intent.putExtras(key, (Serializable)list)
+               接收
+               (List<YourObject>)getIntent().getSerializable(key)
+             */
+            Ln5In12Bean ln5In12Bean = (Ln5In12Bean)intent.getSerializableExtra("Ln5In12Bean");
+            int[] paramArr = {ln5In12Bean.getNo1(),ln5In12Bean.getNo2(),ln5In12Bean.getNo3(),ln5In12Bean.getNo4(),ln5In12Bean.getNo5()};
+            onlyOneAnalysis(paramArr,1000);
+            adapter.notifyDataSetChanged();  //重新适配代理
+        }
     }
 }

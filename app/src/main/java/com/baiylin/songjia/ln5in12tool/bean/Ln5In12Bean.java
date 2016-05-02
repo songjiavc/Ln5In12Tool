@@ -1,6 +1,8 @@
 package com.baiylin.songjia.ln5in12tool.bean;
 
-public class Ln5In12Bean{
+import java.io.Serializable;
+
+public class Ln5In12Bean implements Serializable {
 	
 	private int id;
 	

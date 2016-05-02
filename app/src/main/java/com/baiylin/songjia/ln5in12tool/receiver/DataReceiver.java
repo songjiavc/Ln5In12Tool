@@ -15,6 +15,6 @@ public class DataReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent){
 
-        System.out.println("test!!!!");
+        System.out.println("DataReceiver  test!!!!");
     }
 }

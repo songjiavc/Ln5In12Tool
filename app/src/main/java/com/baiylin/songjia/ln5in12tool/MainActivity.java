@@ -132,10 +132,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
             if (msg.what == 1) {
-                dataReceiver = new DataReceiver();
-                IntentFilter intentFilter = new IntentFilter();
-                intentFilter.addAction("com.baiylin.dataReceiver");
-                registerReceiver(dataReceiver, intentFilter);//注册Broadcast Receiver
                 Intent intent = new Intent(MainActivity.this,GetLottoryData.class);
                 startService(intent);
                 Log.d("GetLottoryWork","新记录获取成功！");
