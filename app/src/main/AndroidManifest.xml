@@ -18,6 +18,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".ren2.Ren2MainActivity"></activity>
+        <service android:name=".service.GetLottoryData"></service>
+        <receiver android:name=".receiver.AlarmReceiver">
+            <intent-filter>
+                <action android:name="ELITOR_CLOCK" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

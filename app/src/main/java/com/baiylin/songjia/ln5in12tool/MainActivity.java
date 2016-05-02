@@ -3,8 +3,13 @@ package com.baiylin.songjia.ln5in12tool;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -12,7 +17,9 @@ import android.widget.Toast;
 import com.baiylin.songjia.ln5in12tool.bean.Ln5In12Bean;
 import com.baiylin.songjia.ln5in12tool.bean.ResponseBean;
 import com.baiylin.songjia.ln5in12tool.db.DbHelper;
+import com.baiylin.songjia.ln5in12tool.receiver.DataReceiver;
 import com.baiylin.songjia.ln5in12tool.ren2.Ren2MainActivity;
+import com.baiylin.songjia.ln5in12tool.service.GetLottoryData;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -25,6 +32,8 @@ import java.util.List;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private DbHelper dbHelper ;
+
+    private DataReceiver dataReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +66,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 final String urlStr = "http://www.dzzst.cn:1819/webappmgr/lottoryOuter/getLn5In12List.action";
                 URL url = null;
                 HttpURLConnection connection = null;
+                Message mess = new Message();
                 try {
                     url = new URL(urlStr);
                     System.out.println(url);
@@ -77,8 +87,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if(responseBean.getStatus() == 1){
                         List<Ln5In12Bean> dataList = responseBean.getLn5In12List();
                         insertData2Db(dataList);
+                        //插入成功后调用后台每隔十分钟请求一次的获取开奖结果的服务
+                        //将需要的数据存放到share中
+                        String lastIssueNumber = dataList.get(dataList.size()-1).getIssueNumber();
+                        SharedPreferences.Editor editor = getSharedPreferences("data",
+                                MODE_PRIVATE).edit();
+                        editor.putString("lastIssueNumber",lastIssueNumber);
+                        editor.commit();
+                        mess.what = 1;
                     }else{
                         //UNDO 数据加载失败！
+                        mess.what = 0;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -86,6 +105,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if(connection != null){
                         connection.disconnect();
                     }
+                    handler.sendMessage(mess);
                 }
             }
         }).start();
@@ -105,4 +125,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
             db.insert("BASE",null,value);
         }
     }
+
+    Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            if (msg.what == 1) {
+                dataReceiver = new DataReceiver();
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction("com.baiylin.dataReceiver");
+                registerReceiver(dataReceiver, intentFilter);//注册Broadcast Receiver
+                Intent intent = new Intent(MainActivity.this,GetLottoryData.class);
+                startService(intent);
+                Log.d("GetLottoryWork","新记录获取成功！");
+            }else{
+                Log.d("GetLottoryWork","新记录获取失败！");
+            }
+        }
+
+    };
 }

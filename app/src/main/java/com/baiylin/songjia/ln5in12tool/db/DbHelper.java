@@ -9,6 +9,16 @@ import android.widget.Toast;
  * Created by songjia on 16-4-19.
  */
 public class DbHelper extends SQLiteOpenHelper {
+    //该数据库访问必须为单例模式
+    //private static DbHelper dbHelper;
+/*
+    public static DbHelper getDbHelper(){
+        if(dbHelper == null){
+            dbHelper = new DbHelper(this, "Ln5In12Analysis.db", null, 1);
+        }
+        return dbHelper;
+    }
+    */
     //创建语句
     public static final String CREATE_BASE_TABLE = "CREATE TABLE BASE(" +
             "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
