@@ -24,7 +24,31 @@
         android:layout_height="wrap_content"
         android:text="@string/analysisSel2"
         android:id="@+id/analysisSel2"
-        android:layout_marginTop="220dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/loadData"
+        android:layout_alignStart="@+id/loadData"
+        android:layout_marginBottom="124dp" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/analysisSel3"
+        android:id="@+id/analysisSel3"
+        android:layout_above="@+id/analysisSel2"
+        android:layout_alignLeft="@+id/loadData" />
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/analysisSel4"
+        android:id="@+id/analysisSel4"
+        android:layout_above="@+id/analysisSel3"
+        android:layout_alignLeft="@+id/loadData" />
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/analysisSel5"
+        android:id="@+id/analysisSel5"
+        android:layout_above="@+id/analysisSel4"
+        android:layout_alignLeft="@+id/loadData" />
+
 </RelativeLayout>

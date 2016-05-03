@@ -45,6 +45,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         loadData.setOnClickListener(this);
         Button analysisSel2 = (Button) findViewById(R.id.analysisSel2);
         analysisSel2.setOnClickListener(this);
+        Button analysisSel3 = (Button) findViewById(R.id.analysisSel3);
+        analysisSel3.setOnClickListener(this);
+        Button analysisSel4 = (Button) findViewById(R.id.analysisSel4);
+        analysisSel4.setOnClickListener(this);
+        Button analysisSel5 = (Button) findViewById(R.id.analysisSel5);
+        analysisSel5.setOnClickListener(this);
     }
 
     @Override
@@ -54,8 +60,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Toast.makeText(MainActivity.this, "data load success", Toast.LENGTH_SHORT).show();
         }else if(view.getId() == R.id.analysisSel2){
             Intent intent = new Intent(MainActivity.this, Ren2MainActivity.class);
-            intent.putExtra("style", "2");
+            intent.putExtra("style", 2);
             startActivity(intent);
+        }else if(view.getId() == R.id.analysisSel3){
+            Intent intent = new Intent(MainActivity.this, Ren2MainActivity.class);
+            intent.putExtra("style", 3);
+            startActivity(intent);
+        }else if(view.getId() == R.id.analysisSel4){
+            Intent intent = new Intent(MainActivity.this, Ren2MainActivity.class);
+            intent.putExtra("style", 4);
+            startActivity(intent);
+        }else if(view.getId() == R.id.analysisSel5){
+            Intent intent = new Intent(MainActivity.this, Ren2MainActivity.class);
+            intent.putExtra("style", 5);
+            startActivity(intent);
+        }else{
+            Log.v("MainActivity","未完待续@");
         }
     }
 

@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -17,7 +16,6 @@ import android.util.Log;
 import com.baiylin.songjia.ln5in12tool.bean.Ln5In12Bean;
 import com.baiylin.songjia.ln5in12tool.bean.ResponseBean;
 import com.baiylin.songjia.ln5in12tool.db.DbHelper;
-import com.baiylin.songjia.ln5in12tool.receiver.AlarmReceiver;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;

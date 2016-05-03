@@ -18,7 +18,6 @@ import com.baiylin.songjia.ln5in12tool.adapter.GroupAdapter;
 import com.baiylin.songjia.ln5in12tool.bean.GroupBean;
 import com.baiylin.songjia.ln5in12tool.bean.Ln5In12Bean;
 import com.baiylin.songjia.ln5in12tool.db.DbHelper;
-import com.baiylin.songjia.ln5in12tool.receiver.DataReceiver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,12 +33,14 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
 
     GroupAdapter adapter;
 
+    int style = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ren2_main);
         Intent intent = getIntent();
-        String style = intent.getStringExtra("style");
+        style = intent.getIntExtra("style",2);
         initData(style);
         adapter = new GroupAdapter(Ren2MainActivity.this,R.layout.activity_ren2_item,groupList);
         ListView listView = (ListView) findViewById(R.id.listView);
@@ -51,14 +52,13 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
         registerReceiver(dataReceiver, intentFilter);//注册Broadcast Receiver
     }
 
-    private void initData(String style){
-        getDataListFromSqlite();
-
+    private void initData(int style){
+        getDataListFromSqlite(style);
     }
 
-    private void getDataListFromSqlite(){
+    private void getDataListFromSqlite(int style){
         groupList.clear();
-        this.getShowList();  //创建列表list
+        this.getShowList(style);  //创建列表list
         dbHelper = new DbHelper(this, "Ln5In12Analysis.db", null, 1);
         //指定库
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -73,7 +73,7 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
                 int no5 = cursor.getInt(cursor.getColumnIndex("NO5"));
                 int[] arr = {no1,no2,no3,no4,no5};
                 //获取任二所有组合
-                onlyOneAnalysis(arr,z);
+                onlyOneAnalysis(arr,z,style);
                 z++;
             }while(cursor.moveToNext());
         }else{
@@ -82,28 +82,46 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
         cursor.close();
     }
     //单个汇总出现次数方法
-    public void onlyOneAnalysis(int[] temp,int z){
-        List<String> lottoryGroupList = getGroupByIntArr(temp);
+    public void onlyOneAnalysis(int[] temp,int z,int style){
+        List<String> lottoryGroupList = getGroupByIntArr(temp,style);
         this.calc(groupList,lottoryGroupList,z);
     }
 
-    private List<String> getGroupByIntArr(int[] arr){
+    private List<String> getGroupByIntArr(int[] arr,int style){
         List<String> groupList = null;
         Arrays.sort(arr);  //对数组排序这样获取有规则的组合
         if(arr.length > 0){
             groupList = new ArrayList<>();
             for(int i = 0;i < arr.length-1;i++){
-                for(int j = i+1;j < arr.length;j++){
-                    groupList.add(arr[i]+":"+arr[j]);
+                for(int j = i+1;j < arr.length;j++) {
+                    if (style >= 3){
+                        for(int z = j+1;z < arr.length;z++){
+                            if(style >= 4) {
+                                for (int p = z + 1; p < arr.length; p++) {
+                                    if(style >= 5) {
+                                        for (int q = p + 1; q < arr.length; q++) {
+                                            groupList.add(arr[i] + ":" + arr[j] + ":" + arr[z] + ":" + arr[p] + ":" + arr[q]);
+                                        }
+                                    }else{
+                                        groupList.add(arr[i] + ":" + arr[j] + ":" + arr[z] + ":" + arr[p]);
+                                    }
+                                }
+                            }else{
+                                groupList.add(arr[i] + ":" + arr[j] + ":" + arr[z]);
+                            }
+                        }
+                    } else {
+                        groupList.add(arr[i] + ":" + arr[j]);
+                    }
                 }
             }
         }
         return groupList;
     }
 
-    private void getShowList(){
+    private void getShowList(int style){
         int[] arr = {1,2,3,4,5,6,7,8,9,10,11,12};
-        List<String> allGroupList = this.getGroupByIntArr(arr);
+        List<String> allGroupList = this.getGroupByIntArr(arr,style);
         for(String group : allGroupList){
             GroupBean groupBean = new GroupBean();
             groupBean.setGroup(group);
@@ -153,8 +171,14 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
              */
             Ln5In12Bean ln5In12Bean = (Ln5In12Bean)intent.getSerializableExtra("Ln5In12Bean");
             int[] paramArr = {ln5In12Bean.getNo1(),ln5In12Bean.getNo2(),ln5In12Bean.getNo3(),ln5In12Bean.getNo4(),ln5In12Bean.getNo5()};
-            onlyOneAnalysis(paramArr,1000);
+            onlyOneAnalysis(paramArr,1000,style);
             adapter.notifyDataSetChanged();  //重新适配代理
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(dataReceiver);
     }
 }
