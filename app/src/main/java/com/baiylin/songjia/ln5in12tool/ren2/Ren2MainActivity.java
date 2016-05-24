@@ -1,5 +1,6 @@
 package com.baiylin.songjia.ln5in12tool.ren2;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Ren2MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class Ren2MainActivity extends Activity implements AdapterView.OnItemClickListener {
 
     DbHelper dbHelper;
 
@@ -76,10 +77,16 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
                 onlyOneAnalysis(arr,z,style);
                 z++;
             }while(cursor.moveToNext());
-        }else{
-
+            TextView textView = (TextView) findViewById(R.id.currentLottoryData);
+            cursor.moveToLast();
+            textView.setText(cursor.getString(cursor.getColumnIndex("ISSUE_NUMBER"))+" : "+cursor.getInt(cursor.getColumnIndex("NO1"))+"  "+cursor.getInt(cursor.getColumnIndex("NO2"))+"  "+cursor.getInt(cursor.getColumnIndex("NO3"))+"  "+cursor.getInt(cursor.getColumnIndex("NO4"))+"  "+cursor.getInt(cursor.getColumnIndex("NO5")));
         }
-        cursor.close();
+        if(!cursor.isClosed()){
+            cursor.close();
+        }
+        if(db.isOpen()){
+            db.close();
+        }
     }
     //单个汇总出现次数方法
     public void onlyOneAnalysis(int[] temp,int z,int style){
@@ -149,13 +156,7 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        System.out.println(adapterView.getId());
         TextView text = (TextView) view.findViewById(R.id.group);
-        System.out.println(text.getText());
-        System.out.println(groupList.get(i).getGroup());
-        System.out.println(view.getId());
-        System.out.println(i+"");
-        System.out.println(l+"");
     }
 
     private class DataReceiver extends BroadcastReceiver{
@@ -169,7 +170,10 @@ public class Ren2MainActivity extends AppCompatActivity implements AdapterView.O
                接收
                (List<YourObject>)getIntent().getSerializable(key)
              */
+            //更新开奖结果
             Ln5In12Bean ln5In12Bean = (Ln5In12Bean)intent.getSerializableExtra("Ln5In12Bean");
+            TextView textView = (TextView) findViewById(R.id.currentLottoryData);
+            textView.setText(ln5In12Bean.getNo1()+"  "+ln5In12Bean.getNo2()+"  "+ln5In12Bean.getNo3()+"  "+ln5In12Bean.getNo4()+"  "+ln5In12Bean.getNo5());
             int[] paramArr = {ln5In12Bean.getNo1(),ln5In12Bean.getNo2(),ln5In12Bean.getNo3(),ln5In12Bean.getNo4(),ln5In12Bean.getNo5()};
             onlyOneAnalysis(paramArr,1000,style);
             adapter.notifyDataSetChanged();  //重新适配代理

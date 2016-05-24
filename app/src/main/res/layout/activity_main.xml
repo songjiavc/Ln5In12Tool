@@ -8,6 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.baiylin.songjia.ln5in12tool.MainActivity">
+<!--  android:background="@android:drawable/alert_dark_frame" -->
 
 
     <Button
@@ -17,7 +18,8 @@
         android:id="@+id/loadData"
         android:layout_marginTop="59dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@color/bright_foreground_disabled_material_dark" />
 
     <Button
         android:layout_width="200dp"
@@ -50,5 +52,31 @@
         android:id="@+id/analysisSel5"
         android:layout_above="@+id/analysisSel4"
         android:layout_alignLeft="@+id/loadData" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/analysisSel5"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/analysisSel5"
+            android:layout_alignLeft="@+id/loadData" />
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/analysisSel5"
+            android:layout_alignLeft="@+id/loadData" />
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/loadData" />
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/loadData" />
+    </TableLayout>
 
 </RelativeLayout>

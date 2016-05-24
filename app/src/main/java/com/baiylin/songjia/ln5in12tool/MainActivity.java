@@ -3,7 +3,6 @@ package com.baiylin.songjia.ln5in12tool;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 import com.baiylin.songjia.ln5in12tool.bean.Ln5In12Bean;
 import com.baiylin.songjia.ln5in12tool.bean.ResponseBean;
 import com.baiylin.songjia.ln5in12tool.db.DbHelper;
-import com.baiylin.songjia.ln5in12tool.receiver.DataReceiver;
 import com.baiylin.songjia.ln5in12tool.ren2.Ren2MainActivity;
 import com.baiylin.songjia.ln5in12tool.service.GetLottoryData;
 import com.google.gson.Gson;
@@ -32,8 +30,6 @@ import java.util.List;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private DbHelper dbHelper ;
-
-    private DataReceiver dataReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +140,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
             value.put("NO5",ln5In12Bean.getNo5());
             db.insert("BASE",null,value);
         }
+        if(db.isOpen()){
+            db.close();
+        }
     }
 
     Handler handler = new Handler() {
@@ -154,7 +153,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (msg.what == 1) {
                 Intent intent = new Intent(MainActivity.this,GetLottoryData.class);
                 startService(intent);
-                Log.d("GetLottoryWork","新记录获取成功！");
             }else{
                 Log.d("GetLottoryWork","新记录获取失败！");
             }

@@ -4,11 +4,33 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="com.baiylin.songjia.ln5in12tool.ren2.Ren2MainActivity">
+    tools:context="com.baiylin.songjia.ln5in12tool.ren2.Ren2MainActivity"
+    android:background="@color/background_floating_material_light">
     >
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/accent_material_dark">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:textSize="20dp"
+            android:text="开奖结果:"
+        />
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:id="@+id/currentLottoryData"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="10dp"
         android:layout_height="wrap_content">
 
         <TextView
